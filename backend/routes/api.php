@@ -42,7 +42,12 @@ Route::prefix('v1')->group(function () {
 
             // OPD Management
             Route::apiResource('opds', \App\Http\Controllers\API\Superadmin\OpdController::class);
+
+            // Assessment Period Management
+            Route::apiResource('periods', \App\Http\Controllers\API\Superadmin\AssessmentPeriodController::class);
+            Route::patch('periods/{id}/toggle-active', [\App\Http\Controllers\API\Superadmin\AssessmentPeriodController::class, 'toggleActive']);
         });
+
 
         // Admin Routes
         Route::middleware('role:admin,superadmin')->prefix('admin')->group(function () {

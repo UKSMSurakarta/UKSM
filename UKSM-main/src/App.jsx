@@ -12,6 +12,7 @@ import SuperadminDashboard from './pages/superadmin/DashboardPage';
 import UsersPage from './pages/superadmin/UsersPage';
 import SekolahsPage from './pages/superadmin/SekolahsPage';
 import OpdsPage from './pages/superadmin/OpdsPage';
+import PeriodsPage from './pages/superadmin/PeriodsPage';
 import AdminDashboard from './pages/admin/DashboardPage';
 import UserDashboard from './pages/user/Dashboard';
 import KontenListPage from './pages/user/KontenListPage';
@@ -50,6 +51,7 @@ function App() {
                         <Route path="/superadmin/users" element={<UsersPage />} />
                         <Route path="/superadmin/sekolahs" element={<SekolahsPage />} />
                         <Route path="/superadmin/opds" element={<OpdsPage />} />
+                        <Route path="/superadmin/periods" element={<PeriodsPage />} />
                         <Route path="/superadmin/verifikasi" element={<VerifikasiPage />} />
                         <Route path="/superadmin/verifikasi/:sekolahId" element={<DetailVerifikasiPage />} />
                     </Route>

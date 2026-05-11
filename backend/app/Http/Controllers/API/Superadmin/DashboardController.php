@@ -54,13 +54,13 @@ class DashboardController extends Controller
 
     public function monitoring(Request $request)
     {
-        $query = Sekolah::with(['opd', 'submissions']);
+        $query = Sekolah::with(['opd', 'levelSubmissions']);
 
         if ($request->opd_id) $query->where('opd_id', $request->opd_id);
         if ($request->jenjang) $query->where('jenjang', $request->jenjang);
 
         $sekolahs = $query->get()->map(function ($s) {
-            $lastSubmission = $s->submissions()->latest()->first();
+            $lastSubmission = $s->levelSubmissions()->latest()->first();
             return [
                 'id' => $s->id,
                 'nama' => $s->nama,

@@ -24,4 +24,10 @@ class Sekolah extends Model
     {
         return $this->hasMany(User::class, 'sekolah_id');
     }
+
+    public function levelSubmissions()
+    {
+        return $this->hasMany(LevelSubmission::class, 'sekolah_id');
+    }
 }
+

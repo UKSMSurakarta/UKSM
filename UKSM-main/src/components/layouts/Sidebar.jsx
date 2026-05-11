@@ -8,8 +8,8 @@ const Sidebar = ({ isMobile, closeSidebar }) => {
     const menuItems = {
         superadmin: [
             { path: '/superadmin/dashboard', icon: 'speedometer2', label: 'Dashboard' },
-            { path: '/superadmin/opd', icon: 'building', label: 'Manajemen OPD' },
-            { path: '/superadmin/sekolah', icon: 'mortarboard', label: 'Manajemen Sekolah' },
+            { path: '/superadmin/opds', icon: 'building', label: 'Manajemen OPD' },
+            { path: '/superadmin/sekolahs', icon: 'mortarboard', label: 'Manajemen Sekolah' },
             { path: '/superadmin/users', icon: 'people', label: 'Manajemen User' },
             { path: '/superadmin/levels', icon: 'journal-list', label: 'Bank Soal & Level' },
             { path: '/superadmin/periods', icon: 'calendar-range', label: 'Periode Assessment' },
