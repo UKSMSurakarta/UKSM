@@ -1,12 +1,14 @@
 import { createContext, useContext, useState } from "react";
-// coomit
+
 const UKSContext = createContext(null);
 
-// Per-question status (sekolah)
-export const Q_STATUS = {
-  DRAFT: "draft",         // belum diisi / sedang diedit
-  SUBMITTED: "submitted", // sudah disubmit, menunggu verifikasi admin
-  EDITING: "editing",     // sedang diedit ulang setelah pernah submit
+export const TIER_KEYS = ["dasar", "madya", "utama", "paripurna"];
+
+// Status per tier (sekolah)
+export const TIER_STATUS = {
+  LOCKED: "locked",       // belum bisa diisi (tier sebelumnya belum selesai)
+  OPEN: "open",           // sedang bisa diisi
+  SUBMITTED: "submitted", // sudah disubmit, terkunci
 };
 
 // Status verifikasi admin per soal
@@ -16,126 +18,65 @@ export const VERIFY = {
   BELUM: "belum",
 };
 
-// Demo data — beberapa soal sudah submitted, beberapa masih draft
-const DEMO_DATA = {
-  1: {
-    answers: {
-      dasar_0: {
-        memenuhi: true,
-        bukti: { files: [], links: [] },
-        qStatus: Q_STATUS.SUBMITTED,
-        submittedAt: null,
-      },
-      dasar_1: {
-        memenuhi: true,
-        bukti: { files: [], links: [] },
-        qStatus: Q_STATUS.SUBMITTED,
-        submittedAt: null,
-      },
-      dasar_2: {
-        memenuhi: false,
-        bukti: { files: [], links: [] },
-        qStatus: Q_STATUS.SUBMITTED,
-        submittedAt: null,
-      },
-      dasar_5: {
-        memenuhi: true,
-        bukti: { files: [], links: [] },
-        qStatus: Q_STATUS.DRAFT,
-        submittedAt: null,
-      },
-      madya_1: {
-        memenuhi: true,
-        bukti: { files: [], links: [] },
-        qStatus: Q_STATUS.SUBMITTED,
-        submittedAt: null,
-      },
-    },
-    verifikasi: {
-      dasar_0: { status: VERIFY.MEMENUHI, catatan: "", verifiedAt: null },
-      dasar_2: { status: VERIFY.BELUM, catatan: "Kotak P3K tidak lengkap, harap dilengkapi.", verifiedAt: null },
-    },
-  },
-  2: { answers: {}, verifikasi: {} },
-};
+// Kosongkan memori / data awal agar sekolah bisa mengisi dari 0
+const DEMO_DATA = {};
 
 export function UKSProvider({ children }) {
   const [schoolData, setSchoolData] = useState(DEMO_DATA);
 
   function getSchoolData(schoolId) {
-    return schoolData[schoolId] || { answers: {}, verifikasi: {} };
+    const sd = schoolData[schoolId] || {};
+    return {
+      tierStatus: sd.tierStatus || { dasar: TIER_STATUS.OPEN, madya: TIER_STATUS.LOCKED, utama: TIER_STATUS.LOCKED, paripurna: TIER_STATUS.LOCKED },
+      answers: sd.answers || {},
+      verifikasi: sd.verifikasi || {},
+      certificateName: sd.certificateName || "",
+      completed: sd.completed || false,
+    };
   }
 
-  // Update draft (tidak submit)
   function updateAnswer(schoolId, key, memenuhi, bukti) {
     setSchoolData((prev) => {
       const sd = prev[schoolId] || {};
-      const existing = sd.answers?.[key] || {};
       return {
         ...prev,
         [schoolId]: {
           ...sd,
           answers: {
             ...(sd.answers || {}),
-            [key]: {
-              ...existing,
-              memenuhi,
-              bukti: bukti || { files: [], links: [] },
-              // jika sedang editing, tetap editing; jika draft tetap draft
-              qStatus: existing.qStatus === Q_STATUS.SUBMITTED ? Q_STATUS.EDITING : (existing.qStatus || Q_STATUS.DRAFT),
-            },
+            [key]: { memenuhi, bukti: bukti || { files: [], links: [] } },
           },
         },
       };
     });
   }
 
-  // Submit satu soal
-  function submitQuestion(schoolId, key) {
+  // Submit a whole tier → lock it, open next
+  function submitTier(schoolId, tierKey) {
     setSchoolData((prev) => {
       const sd = prev[schoolId] || {};
-      const existing = sd.answers?.[key] || {};
+      const tierIdx = TIER_KEYS.indexOf(tierKey);
+      const nextTier = TIER_KEYS[tierIdx + 1];
+      const isLast = tierIdx === TIER_KEYS.length - 1;
+
+      const newTierStatus = {
+        ...(sd.tierStatus || {}),
+        [tierKey]: TIER_STATUS.SUBMITTED,
+      };
+      if (nextTier) newTierStatus[nextTier] = TIER_STATUS.OPEN;
+
       return {
         ...prev,
         [schoolId]: {
           ...sd,
-          answers: {
-            ...(sd.answers || {}),
-            [key]: {
-              ...existing,
-              qStatus: Q_STATUS.SUBMITTED,
-              submittedAt: new Date().toLocaleString("id-ID"),
-            },
-          },
-          // reset verifikasi for this key if re-submitted
-          verifikasi: {
-            ...(sd.verifikasi || {}),
-            [key]: undefined, // clear old verification
-          },
+          tierStatus: newTierStatus,
+          completed: isLast ? true : sd.completed,
+          [`${tierKey}SubmittedAt`]: new Date().toLocaleString("id-ID"),
         },
       };
     });
   }
 
-  // Set soal ke mode editing (buka kunci)
-  function editQuestion(schoolId, key) {
-    setSchoolData((prev) => {
-      const sd = prev[schoolId] || {};
-      const existing = sd.answers?.[key] || {};
-      return {
-        ...prev,
-        [schoolId]: {
-          ...sd,
-          answers: {
-            ...(sd.answers || {}),
-            [key]: { ...existing, qStatus: Q_STATUS.EDITING },
-          },
-        },
-      };
-    });
-  }
-
-  // Admin: update verifikasi satu soal
   function updateVerifikasi(schoolId, key, status, catatan) {
     setSchoolData((prev) => {
       const sd = prev[schoolId] || {};
@@ -145,14 +86,13 @@ export function UKSProvider({ children }) {
           ...sd,
           verifikasi: {
             ...(sd.verifikasi || {}),
-            [key]: { status, catatan: catatan || "", verifiedAt: new Date().toLocaleString("id-ID") },
+            [key]: { status, catatan: catatan || "" },
           },
         },
       };
     });
   }
 
-  // Admin: submit verifikasi satu soal (finalize)
   function submitVerifikasiQuestion(schoolId, key, status, catatan) {
     setSchoolData((prev) => {
       const sd = prev[schoolId] || {};
@@ -162,15 +102,17 @@ export function UKSProvider({ children }) {
           ...sd,
           verifikasi: {
             ...(sd.verifikasi || {}),
-            [key]: {
-              status,
-              catatan: catatan || "",
-              verifiedAt: new Date().toLocaleString("id-ID"),
-              finalized: true,
-            },
+            [key]: { status, catatan: catatan || "", finalized: true, verifiedAt: new Date().toLocaleString("id-ID") },
           },
         },
       };
+    });
+  }
+
+  function setCertificateName(schoolId, name) {
+    setSchoolData((prev) => {
+      const sd = prev[schoolId] || {};
+      return { ...prev, [schoolId]: { ...sd, certificateName: name } };
     });
   }
 
@@ -180,13 +122,9 @@ export function UKSProvider({ children }) {
 
   return (
     <UKSContext.Provider value={{
-      getSchoolData,
-      updateAnswer,
-      submitQuestion,
-      editQuestion,
-      updateVerifikasi,
-      submitVerifikasiQuestion,
-      getAllSchoolData,
+      getSchoolData, updateAnswer, submitTier,
+      updateVerifikasi, submitVerifikasiQuestion,
+      setCertificateName, getAllSchoolData,
     }}>
       {children}
     </UKSContext.Provider>
