@@ -78,7 +78,7 @@ export const TIERS = {
 };
 
 export const SCHOOLS = [
-  { id: 1, name: "SDN 01 Laweyan", username: "kepsek_laweyan", password: "demo123" },
+  { id: 1, name: "SDN 011 Laweyan", username: "kepsek_laweyan", password: "demo123" },
   { id: 2, name: "SMPN 05 Banjarsari", username: "kepsek_banjarsari", password: "demo123" },
   { id: 3, name: "SMAN 02 Serengan", username: "kepsek_serengan", password: "demo123" },
 ];
