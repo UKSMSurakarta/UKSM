@@ -114,7 +114,7 @@ const IsiLevelPage = () => {
 
     if (loading) return <div className="container mt-5 text-center"><div className="spinner-border text-primary"></div></div>;
 
-    const isReadOnly = levelStatus === 'final';
+    const isReadOnly = levelStatus === 'final' || levelStatus === 'verified';
 
     return (
         <div className="container mt-4 pb-5">
@@ -137,9 +137,9 @@ const IsiLevelPage = () => {
             </div>
 
             {isReadOnly && (
-                <div className="alert alert-success border-0 shadow-sm mb-4">
-                    <i className="bi bi-check-circle-fill me-2"></i>
-                    Level ini sudah difinalisasi. Jawaban Anda tidak dapat diubah lagi.
+                <div className={`alert ${levelStatus === 'verified' ? 'alert-primary' : 'alert-success'} border-0 shadow-sm mb-4`}>
+                    <i className={`bi ${levelStatus === 'verified' ? 'bi-patch-check-fill' : 'bi-check-circle-fill'} me-2`}></i>
+                    {levelStatus === 'verified' ? 'Level ini telah diverifikasi oleh Admin. Jawaban Anda tidak dapat diubah lagi.' : 'Level ini sudah difinalisasi. Jawaban Anda tidak dapat diubah lagi.'}
                 </div>
             )}
 

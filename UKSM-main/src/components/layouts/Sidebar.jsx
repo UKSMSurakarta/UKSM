@@ -15,13 +15,12 @@ const Sidebar = ({ isMobile, closeSidebar }) => {
             { path: '/superadmin/periods', icon: 'calendar-range', label: 'Periode Assessment' },
             { path: '/superadmin/reports', icon: 'file-earmark-bar-graph', label: 'Laporan & Rekap' },
             { path: '/superadmin/content', icon: 'newspaper', label: 'Konten Website' },
-            { path: '/superadmin/settings', icon: 'gear', label: 'Pengaturan' },
         ],
         admin: [
             { path: '/admin/dashboard', icon: 'speedometer2', label: 'Dashboard' },
             { path: '/admin/data-sekolah', icon: 'mortarboard', label: 'Data Sekolah' },
             { path: '/admin/monitoring', icon: 'display', label: 'Monitoring Assessment' },
-            { path: '/admin/verification', icon: 'check-circle', label: 'Verifikasi Jawaban' },
+            { path: '/admin/verifikasi', icon: 'check-circle', label: 'Verifikasi Jawaban' },
             { path: '/admin/reports', icon: 'file-earmark-bar-graph', label: 'Laporan Wilayah' },
         ],
         user: [
@@ -34,7 +33,6 @@ const Sidebar = ({ isMobile, closeSidebar }) => {
         sekolah: [
             { path: '/sekolah/dashboard', icon: 'speedometer2', label: 'Dashboard' },
             { path: '/sekolah/assessment', icon: 'clipboard-check', label: 'Assessment Saya' },
-            { path: '/sekolah/progress', icon: 'graph-up-arrow', label: 'Progress Level' },
             { path: '/sekolah/profile', icon: 'person-vcard', label: 'Profil Sekolah' },
         ],
     };

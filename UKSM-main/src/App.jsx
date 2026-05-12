@@ -13,6 +13,8 @@ import UsersPage from './pages/superadmin/UsersPage';
 import SekolahsPage from './pages/superadmin/SekolahsPage';
 import OpdsPage from './pages/superadmin/OpdsPage';
 import PeriodsPage from './pages/superadmin/PeriodsPage';
+import LevelsPage from './pages/superadmin/LevelsPage';
+import PertanyaanPage from './pages/superadmin/PertanyaanPage';
 import AdminDashboard from './pages/admin/DashboardPage';
 import UserDashboard from './pages/user/Dashboard';
 import KontenListPage from './pages/user/KontenListPage';
@@ -22,6 +24,7 @@ import DetailVerifikasiPage from './pages/admin/DetailVerifikasiPage';
 import AssessmentPage from './pages/sekolah/AssessmentPage';
 import IsiLevelPage from './pages/sekolah/IsiLevelPage';
 import SekolahDashboard from './pages/sekolah/Dashboard';
+import ProfilePage from './pages/sekolah/ProfilePage';
 
 // Public Pages
 import PublicLayout from './components/layouts/PublicLayout';
@@ -52,6 +55,8 @@ function App() {
                         <Route path="/superadmin/sekolahs" element={<SekolahsPage />} />
                         <Route path="/superadmin/opds" element={<OpdsPage />} />
                         <Route path="/superadmin/periods" element={<PeriodsPage />} />
+                        <Route path="/superadmin/levels" element={<LevelsPage />} />
+                        <Route path="/superadmin/levels/:levelId/questions" element={<PertanyaanPage />} />
                         <Route path="/superadmin/verifikasi" element={<VerifikasiPage />} />
                         <Route path="/superadmin/verifikasi/:sekolahId" element={<DetailVerifikasiPage />} />
                     </Route>
@@ -82,6 +87,7 @@ function App() {
                         <Route path="/sekolah/dashboard" element={<SekolahDashboard />} />
                         <Route path="/sekolah/assessment" element={<AssessmentPage />} />
                         <Route path="/sekolah/levels/:id" element={<IsiLevelPage />} />
+                        <Route path="/sekolah/profile" element={<ProfilePage />} />
                     </Route>
                 </Route>
 

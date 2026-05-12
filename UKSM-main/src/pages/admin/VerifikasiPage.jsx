@@ -30,54 +30,72 @@ const VerifikasiPage = () => {
                 <p className="text-muted small">Daftar sekolah yang telah melakukan submit final dan menunggu validasi.</p>
             </div>
 
-            <div className="card border-0 shadow-sm overflow-hidden">
+            <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
                 <div className="card-body p-0">
                     <div className="table-responsive">
                         <table className="table table-hover align-middle mb-0">
-                            <thead className="bg-light">
-                                <tr className="small text-muted">
-                                    <th className="px-4 py-3 border-0">NAMA SEKOLAH</th>
-                                    <th className="py-3 border-0">JENJANG</th>
-                                    <th className="py-3 border-0">LEVEL MENUNGGU</th>
-                                    <th className="py-3 border-0 text-center">AKSI</th>
+                            <thead>
+                                <tr className="bg-light border-bottom">
+                                    <th className="px-4 py-3 border-0 text-muted small fw-bold text-uppercase ls-1">Informasi Sekolah</th>
+                                    <th className="py-3 border-0 text-muted small fw-bold text-uppercase ls-1">Wilayah / OPD</th>
+                                    <th className="py-3 border-0 text-muted small fw-bold text-uppercase ls-1">Level Menunggu</th>
+                                    <th className="py-3 border-0 text-muted small fw-bold text-uppercase ls-1 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
                                     <tr>
                                         <td colSpan="4" className="text-center py-5">
-                                            <div className="spinner-border text-primary spinner-border-sm me-2"></div>
-                                            Memuat data...
+                                            <div className="spinner-border text-primary me-2"></div>
+                                            <div className="mt-2 text-muted">Menyiapkan data verifikasi...</div>
                                         </td>
                                     </tr>
                                 ) : list.length > 0 ? (
                                     list.map(sekolah => (
-                                        <tr key={sekolah.id}>
-                                            <td className="px-4">
-                                                <div className="fw-bold">{sekolah.nama}</div>
-                                                <div className="text-muted extra-small">{sekolah.opd?.nama}</div>
+                                        <tr key={sekolah.id} className="transition-all">
+                                            <td className="px-4 py-4">
+                                                <div className="d-flex align-items-center">
+                                                    <div className="bg-primary-subtle text-primary rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style={{ width: '45px', height: '45px' }}>
+                                                        <i className="bi bi-building fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div className="fw-bold text-dark fs-6">{sekolah.nama}</div>
+                                                        <div className="badge bg-light text-primary border border-primary-subtle extra-small mt-1">{sekolah.jenjang}</div>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td><span className="badge bg-light text-dark border">{sekolah.jenjang}</span></td>
-                                            <td>
-                                                {sekolah.submissions.map(sub => (
-                                                    <span key={sub.id} className="badge bg-warning-subtle text-warning me-1 mb-1">
-                                                        Level {sub.level.urutan}
-                                                    </span>
-                                                ))}
+                                            <td className="py-4">
+                                                <div className="fw-medium text-secondary">{sekolah.opd?.nama || '-'}</div>
+                                                <div className="extra-small text-muted mt-1"><i className="bi bi-geo-alt me-1"></i>Kota Surakarta</div>
                                             </td>
-                                            <td className="text-center">
+                                            <td className="py-4">
+                                                <div className="d-flex flex-wrap gap-1">
+                                                    {sekolah.levelSubmissions.map(sub => (
+                                                        <span key={sub.id} className="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-2">
+                                                            <i className="bi bi-clock-history me-1"></i> Level {sub.level.urutan}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="text-center py-4 px-4">
                                                 <button 
-                                                    className="btn btn-sm btn-primary rounded-pill px-3"
+                                                    className="btn btn-primary rounded-3 px-4 py-2 fw-bold shadow-sm"
                                                     onClick={() => navigate(`/admin/verifikasi/${sekolah.id}`)}
                                                 >
-                                                    <i className="bi bi-shield-check me-1"></i> Periksa
+                                                    Periksa Jawaban <i className="bi bi-arrow-right ms-1"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className="text-center py-5 text-muted">Tidak ada data yang menunggu verifikasi.</td>
+                                        <td colSpan="4" className="text-center py-5">
+                                            <div className="mb-3 text-muted">
+                                                <i className="bi bi-check-all fs-1 opacity-25"></i>
+                                            </div>
+                                            <h6 className="fw-bold text-dark">Semua Beres!</h6>
+                                            <p className="text-muted small mb-0">Tidak ada sekolah yang menunggu verifikasi saat ini.</p>
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>
@@ -87,8 +105,12 @@ const VerifikasiPage = () => {
             </div>
             
             <style>{`
-                .extra-small { font-size: 0.75rem; }
-                .bg-warning-subtle { background-color: #fff9e6; border: 1px solid #ffeeba; }
+                .extra-small { font-size: 0.7rem; }
+                .ls-1 { letter-spacing: 0.5px; }
+                .bg-primary-subtle { background-color: #e7f1ff; }
+                .bg-warning-subtle { background-color: #fff9e6; }
+                .transition-all { transition: all 0.2s ease; }
+                .transition-all:hover { background-color: #fcfdfe; }
             `}</style>
         </div>
     );

@@ -48,3 +48,21 @@ export const uploadBuktiApi = async (formData) => {
         throw error.response?.data || { message: 'Gagal mengunggah berkas.' };
     }
 };
+
+export const getProfileApi = async () => {
+    try {
+        const response = await axiosInstance.get('/sekolah/profile');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Gagal mengambil data profil.' };
+    }
+};
+
+export const updateProfileApi = async (data) => {
+    try {
+        const response = await axiosInstance.put('/sekolah/profile', data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Gagal memperbarui profil.' };
+    }
+};

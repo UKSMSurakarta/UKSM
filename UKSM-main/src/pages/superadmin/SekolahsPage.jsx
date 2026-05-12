@@ -166,9 +166,31 @@ const SekolahsPage = () => {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label small fw-bold text-muted">Kepala Sekolah</label>
-                                        <input type="text" className="form-control" value={form.kepala_sekolah} onChange={(e) => setForm({...form, kepala_sekolah: e.target.value})} />
+                                    <div className="row">
+                                        <div className="col-md-6 mb-3">
+                                            <label className="form-label small fw-bold text-muted">Kepala Sekolah</label>
+                                            <input type="text" className="form-control" value={form.kepala_sekolah} onChange={(e) => setForm({...form, kepala_sekolah: e.target.value})} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label className="form-label small fw-bold text-muted">Nomor Telepon</label>
+                                            <input type="text" className="form-control" value={form.telepon || ''} onChange={(e) => setForm({...form, telepon: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-8 mb-3">
+                                            <label className="form-label small fw-bold text-muted">Email Sekolah</label>
+                                            <input type="email" className="form-control" value={form.email_sekolah || ''} onChange={(e) => setForm({...form, email_sekolah: e.target.value})} />
+                                        </div>
+                                        <div className="col-md-4 mb-3">
+                                            <label className="form-label small fw-bold text-muted">Akreditasi</label>
+                                            <select className="form-select" value={form.akreditasi || ''} onChange={(e) => setForm({...form, akreditasi: e.target.value})}>
+                                                <option value="">Pilih</option>
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="Tidak">Tidak</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label small fw-bold text-muted">Alamat Lengkap</label>
