@@ -14,7 +14,6 @@ export default function UserPage() {
   const sd = getSchoolData(schoolId);
   const { tierStatus, answers, verifikasi } = sd;
 
-  // Certificate unlocked only when admin has verified everything
   const certUnlocked = allTiersVerifiedForSchool(schoolId);
   const kepalaName = user.school.kepalaName || user.school.name;
 
@@ -75,7 +74,6 @@ export default function UserPage() {
     });
   }
 
-  // Check if all questions in a tier are answered
   function isTierComplete(tk) {
     return TIERS[tk].questions.every((_, i) => {
       const key = `${tk}_${i}`;
@@ -85,7 +83,6 @@ export default function UserPage() {
   }
 
   async function handleSubmitTier(tk) {
-    // Save all local answers for this tier first
     TIERS[tk].questions.forEach((_, i) => {
       const key = `${tk}_${i}`;
       const a = getAns(key);
@@ -104,11 +101,9 @@ export default function UserPage() {
     }
   }
 
-  // Overall progress
   const totalAnswered = TIER_KEYS.reduce((acc, tk) =>
     acc + TIERS[tk].questions.filter((_, i) => { const a = getAns(`${tk}_${i}`); return a && a.memenuhi !== null && a.memenuhi !== undefined; }).length, 0);
 
-  // Check if all tiers submitted (sekolah selesai, menunggu verifikasi)
   const allTiersSubmitted = TIER_KEYS.every(tk => (tierStatus[tk] || TIER_STATUS.LOCKED) === TIER_STATUS.SUBMITTED);
 
   return (
@@ -193,13 +188,11 @@ export default function UserPage() {
           const complete = isTierComplete(tk);
           const verif = verifikasi || {};
 
-          // Count answers in this tier
           const answeredInTier = TIERS[tk].questions.filter((_, i) => {
             const a = getAns(`${tk}_${i}`);
             return a && a.memenuhi !== null && a.memenuhi !== undefined;
           }).length;
 
-          // Check if tier has any admin feedback
           const hasBelum = TIERS[tk].questions.some((_, i) => verif[`${tk}_${i}`]?.finalized && verif[`${tk}_${i}`]?.status === VERIFY.BELUM);
 
           return (
@@ -357,7 +350,6 @@ export default function UserPage() {
   );
 }
 
-// Styles
 const stickyHeader = {
   background: "white", borderBottom: "0.5px solid #e0e0e0",
   padding: "12px 20px", display: "flex", justifyContent: "space-between",
