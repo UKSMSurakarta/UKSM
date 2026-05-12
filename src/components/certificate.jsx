@@ -4,9 +4,9 @@ import templateSrc from "../assets/sertifikat-template.png";
 // Posisi nama pada gambar template (970x686):
 // "Ketut Susilo" ada di sekitar x=105, y=295 (dari kiri atas)
 // Kita overlay teks di posisi yang sama secara proporsional
-const NAME_X_RATIO = 0.225; // ~105/970
-const NAME_Y_RATIO = 0.500; // ~295/686
-const FONT_SIZE_RATIO = 0.050; // proporsional terhadap lebar canvas
+const NAME_X_RATIO = 0.112; // ~105/970
+const NAME_Y_RATIO = 0.475; // ~295/686
+const FONT_SIZE_RATIO = 0.040; // proporsional terhadap lebar canvas
 
 export default function Certificate({ schoolName, kepalaName }) {
   const canvasRef = useRef(null);
