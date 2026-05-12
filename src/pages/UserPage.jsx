@@ -1,27 +1,28 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useUKS, TIER_STATUS, VERIFY, TIER_KEYS } from "../context/UKSContext";
 import { TIERS } from "../data/questions";
 import { useToast } from "../components/Toast";
-
-const CANVA_URL = "https://canva.link/uuuecrycswqr5sf";
+import Certificate from "../components/Certificate";
 
 export default function UserPage() {
   const { user, logout } = useAuth();
-  const { getSchoolData, updateAnswer, submitTier, setCertificateName } = useUKS();
+  const { getSchoolData, updateAnswer, submitTier, allTiersVerifiedForSchool } = useUKS();
   const { showToast } = useToast();
 
   const schoolId = user.school.id;
   const sd = getSchoolData(schoolId);
-  const { tierStatus, answers, verifikasi, completed, certificateName } = sd;
+  const { tierStatus, answers, verifikasi } = sd;
+
+  // Certificate unlocked only when admin has verified everything
+  const certUnlocked = allTiersVerifiedForSchool(schoolId);
+  const kepalaName = user.school.kepalaName || user.school.name;
 
   const [localAnswers, setLocalAnswers] = useState({});
   const [linkInputs, setLinkInputs] = useState({});
   const [openTiers, setOpenTiers] = useState({ dasar: true, madya: false, utama: false, paripurna: false });
   const [confirmTier, setConfirmTier] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [certName, setCertName] = useState(certificateName || "");
-  const [certSaved, setCertSaved] = useState(!!certificateName);
 
   function getAns(key) {
     return localAnswers[key] !== undefined ? localAnswers[key] : (answers[key] || null);
@@ -103,16 +104,12 @@ export default function UserPage() {
     }
   }
 
-  function handleSaveCertName() {
-    if (!certName.trim()) { showToast("Nama tidak boleh kosong","error"); return; }
-    setCertificateName(schoolId, certName.trim());
-    setCertSaved(true);
-    showToast("Nama sertifikat disimpan ✓");
-  }
-
   // Overall progress
   const totalAnswered = TIER_KEYS.reduce((acc, tk) =>
     acc + TIERS[tk].questions.filter((_, i) => { const a = getAns(`${tk}_${i}`); return a && a.memenuhi !== null && a.memenuhi !== undefined; }).length, 0);
+
+  // Check if all tiers submitted (sekolah selesai, menunggu verifikasi)
+  const allTiersSubmitted = TIER_KEYS.every(tk => (tierStatus[tk] || TIER_STATUS.LOCKED) === TIER_STATUS.SUBMITTED);
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f3" }}>
@@ -132,43 +129,26 @@ export default function UserPage() {
 
       <div style={{ maxWidth: 700, margin: "0 auto", padding: "20px 16px" }}>
 
-        {/* Certificate section (shown when completed) */}
-        {completed && (
+        {/* Sertifikat — muncul HANYA setelah admin verifikasi semua */}
+        {certUnlocked && (
           <div style={{ background: "white", borderRadius: 14, border: "2px solid #1D9E75", padding: "20px", marginBottom: 20 }}>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>🎉</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "#1D9E75" }}>Selamat! Semua Kategori Selesai</div>
-              <div style={{ fontSize: 13, color: "#888", marginTop: 4 }}>Masukkan nama untuk sertifikat, lalu buka sertifikat di bawah.</div>
+              <div style={{ fontSize: 32, marginBottom: 6 }}>🏆</div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: "#1D9E75", marginBottom: 4 }}>Selamat! Penilaian UKS Selesai</div>
+              <div style={{ fontSize: 13, color: "#888" }}>Semua instrumen telah diverifikasi. Sertifikat siap diunduh.</div>
             </div>
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-              <input
-                type="text"
-                value={certName}
-                onChange={e => { setCertName(e.target.value); setCertSaved(false); }}
-                placeholder="Masukkan nama lengkap untuk sertifikat..."
-                style={{ flex: 1, padding: "9px 12px", borderRadius: 8, border: "0.5px solid #d0d0d0", fontSize: 13 }}
-              />
-              <button onClick={handleSaveCertName} style={{ padding: "9px 16px", borderRadius: 8, border: "none", background: "#1D9E75", color: "white", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Simpan
-              </button>
+            <Certificate schoolName={user.school.name} kepalaName={kepalaName} />
+          </div>
+        )}
+
+        {/* Banner: semua sudah submit tapi menunggu verifikasi admin */}
+        {allTiersSubmitted && !certUnlocked && (
+          <div style={{ background: "#FFF8E6", border: "0.5px solid #F5D98B", borderRadius: 10, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>⏳</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#854F0B" }}>Semua kategori sudah dikirim!</div>
+              <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>Menunggu verifikasi admin. Sertifikat akan muncul setelah semua soal diverifikasi.</div>
             </div>
-            {certSaved && certName && (
-              <div style={{ marginTop: 8 }}>
-                <div style={{ fontSize: 12, color: "#888", marginBottom: 8, textAlign: "center" }}>
-                  Sertifikat untuk: <strong>{certName}</strong> — Edit nama di Canva setelah dibuka
-                </div>
-                <iframe
-                  src={CANVA_URL}
-                  style={{ width: "100%", height: 480, borderRadius: 10, border: "0.5px solid #e0e0e0" }}
-                  allowFullScreen
-                  title="Sertifikat UKS"
-                />
-                <a href={CANVA_URL} target="_blank" rel="noopener noreferrer"
-                  style={{ display: "block", textAlign: "center", marginTop: 10, fontSize: 13, color: "#185FA5", textDecoration: "underline" }}>
-                  Buka di Canva untuk edit nama →
-                </a>
-              </div>
-            )}
           </div>
         )}
 
