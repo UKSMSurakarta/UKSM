@@ -4,21 +4,18 @@ const UKSContext = createContext(null);
 
 export const TIER_KEYS = ["dasar", "madya", "utama", "paripurna"];
 
-// Status per tier (sekolah)
 export const TIER_STATUS = {
-  LOCKED: "locked",       // belum bisa diisi (tier sebelumnya belum selesai)
-  OPEN: "open",           // sedang bisa diisi
-  SUBMITTED: "submitted", // sudah disubmit, terkunci
+  LOCKED: "locked",
+  OPEN: "open", 
+  SUBMITTED: "submitted",
 };
 
-// Status verifikasi admin per soal
 export const VERIFY = {
   PENDING: "pending",
   MEMENUHI: "memenuhi",
   BELUM: "belum",
 };
 
-// Demo: school 1 sudah submit dasar, madya open; school 2 fresh
 const DEMO_DATA = {
   1: {
     tierStatus: {
@@ -52,7 +49,6 @@ const DEMO_DATA = {
       dasar_21: { memenuhi: true,  bukti: { files: [], links: [] } },
       dasar_22: { memenuhi: true,  bukti: { files: [], links: [] } },
     },
-    // Semua soal sudah diverifikasi admin → sertifikat muncul
     verifikasi: {
       dasar_0:  { status: VERIFY.MEMENUHI, catatan: "", finalized: true, verifiedAt: "2025-05-02 10:00" },
       dasar_1:  { status: VERIFY.MEMENUHI, catatan: "", finalized: true, verifiedAt: "2025-05-02 10:01" },
@@ -120,7 +116,6 @@ export function UKSProvider({ children }) {
     });
   }
 
-  // Submit a whole tier → lock it, open next
   function submitTier(schoolId, tierKey) {
     setSchoolData((prev) => {
       const sd = prev[schoolId] || {};
@@ -178,18 +173,15 @@ export function UKSProvider({ children }) {
     });
   }
 
-  // Returns true when every submitted tier has ALL its answered questions finalized by admin
   function allTiersVerifiedForSchool(schoolId) {
     const sd = schoolData[schoolId] || {};
     const answers = sd.answers || {};
     const verifikasi = sd.verifikasi || {};
     const tierStatus = sd.tierStatus || {};
 
-    // Must have submitted all 4 tiers first
     const allSubmitted = TIER_KEYS.every(tk => tierStatus[tk] === TIER_STATUS.SUBMITTED);
     if (!allSubmitted) return false;
 
-    // Every answered question must be finalized by admin
     const answeredKeys = Object.keys(answers);
     if (answeredKeys.length === 0) return false;
     return answeredKeys.every(key => verifikasi[key]?.finalized === true);
