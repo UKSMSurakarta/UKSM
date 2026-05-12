@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import templateSrc from "../assets/sertifikat-template.png";
 
-// Posisi nama pada gambar template (970x686):
-// "Ketut Susilo" ada di sekitar x=105, y=295 (dari kiri atas)
-// Kita overlay teks di posisi yang sama secara proporsional
-const NAME_X_RATIO = 0.112; // ~105/970
-const NAME_Y_RATIO = 0.475; // ~295/686
-const FONT_SIZE_RATIO = 0.040; // proporsional terhadap lebar canvas
+
+const NAME_X_RATIO = 0.112
+const NAME_Y_RATIO = 0.475; 
+const FONT_SIZE_RATIO = 0.040; 
 
 export default function Certificate({ schoolName, kepalaName }) {
   const canvasRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
-  // Nama yang ditampilkan: nama sekolah (sesuai permintaan)
   const displayName = schoolName || kepalaName || "Nama Sekolah";
 
   useEffect(() => {
@@ -23,32 +20,25 @@ export default function Certificate({ schoolName, kepalaName }) {
 
     const img = new Image();
     img.onload = () => {
-      // Set canvas size sama dengan gambar asli
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
 
-      // Gambar template
       ctx.drawImage(img, 0, 0);
 
-      // Hitung posisi & ukuran font
       const fontSize = Math.round(img.naturalWidth * FONT_SIZE_RATIO);
       const x = img.naturalWidth * NAME_X_RATIO;
       const y = img.naturalHeight * NAME_Y_RATIO;
 
-      // Tutup teks lama dengan kotak putih (area nama "Ketut Susilo")
-      // Koordinat disesuaikan dengan posisi asli di template
       const coverW = img.naturalWidth * 0.45;
       const coverH = fontSize * 1.4;
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(x - 4, y - fontSize * 0.9, coverW, coverH);
 
-      // Tulis nama baru
       ctx.fillStyle = "#1a1a2e";
       ctx.font = `${fontSize}px Georgia, serif`;
       ctx.textBaseline = "alphabetic";
       ctx.fillText(displayName, x, y);
 
-      // Garis bawah nama (seperti di template asli)
       const textWidth = Math.min(ctx.measureText(displayName).width, coverW - 8);
       ctx.strokeStyle = "#1a1a2e";
       ctx.lineWidth = 1.5;
