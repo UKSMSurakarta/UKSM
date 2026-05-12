@@ -108,6 +108,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/levels/{id}/jawab', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'store']);
             Route::post('/levels/{id}/submit-final', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'submitFinal']);
             Route::post('/upload-bukti', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'upload']);
+            Route::get('/profile', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'profile']);
+            Route::put('/profile', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'updateProfile']);
             
             Route::get('/dashboard', [\App\Http\Controllers\API\Sekolah\AssessmentController::class, 'index']);
         });

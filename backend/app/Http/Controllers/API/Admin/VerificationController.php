@@ -19,9 +19,9 @@ class VerificationController extends Controller
      */
     public function index()
     {
-        $sekolahs = Sekolah::whereHas('submissions', function($q) {
+        $sekolahs = Sekolah::whereHas('levelSubmissions', function($q) {
             $q->where('status', 'final');
-        })->with(['opd', 'submissions' => function($q) {
+        })->with(['opd', 'levelSubmissions' => function($q) {
             $q->where('status', 'final')->with('level');
         }])->get();
 

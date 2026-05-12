@@ -87,10 +87,10 @@ class AssessmentController extends Controller
         $period = $this->service->getActivePeriod();
 
         $status = $this->service->getLevelStatus($level, $sekolahId, $period->id);
-        if ($status === 'locked' || $status === 'final') {
+        if ($status === 'locked' || $status === 'final' || $status === 'verified') {
             return response()->json([
                 'success' => false, 
-                'message' => 'Level ini terkunci atau sudah final.'
+                'message' => 'Level ini terkunci atau sudah dalam status final/verified.'
             ], 403);
         }
 
@@ -211,6 +211,58 @@ class AssessmentController extends Controller
                 'path' => $path,
                 'url' => Storage::url($path)
             ]
+        ]);
+    }
+
+    /**
+     * Get school profile and assessment summary.
+     */
+    public function profile()
+    {
+        $user = auth()->user();
+        $sekolah = \App\Models\Sekolah::with('opd')->findOrFail($user->sekolah_id);
+        $period = $this->service->getActivePeriod();
+        
+        $stats = $period ? $this->service->getSchoolStats($sekolah->id, $period->id) : [
+            'kategori_selesai' => '0 / 0',
+            'indikator_terisi' => '0 / 0',
+            'progress' => 0,
+            'is_verified' => false
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'sekolah' => $sekolah,
+                'stats' => $stats
+            ]
+        ]);
+    }
+
+    /**
+     * Update school profile information.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $sekolah = \App\Models\Sekolah::findOrFail($user->sekolah_id);
+
+        $request->validate([
+            'alamat' => 'nullable|string',
+            'telepon' => 'nullable|string',
+            'email_sekolah' => 'nullable|email',
+            'akreditasi' => 'nullable|string|max:2',
+            'kepala_sekolah' => 'nullable|string',
+        ]);
+
+        $sekolah->update($request->only([
+            'alamat', 'telepon', 'email_sekolah', 'akreditasi', 'kepala_sekolah'
+        ]));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil sekolah berhasil diperbarui.',
+            'data' => $sekolah
         ]);
     }
 }

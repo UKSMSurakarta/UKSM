@@ -8,7 +8,8 @@ class Sekolah extends Model
 {
     protected $fillable = [
         'nama', 'npsn', 'jenjang', 'alamat', 
-        'kepala_sekolah', 'opd_id', 'is_active'
+        'kepala_sekolah', 'telepon', 'email_sekolah',
+        'akreditasi', 'tahun_bergabung', 'opd_id', 'is_active'
     ];
 
     protected $casts = [

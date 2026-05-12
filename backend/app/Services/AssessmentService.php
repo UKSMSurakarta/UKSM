@@ -26,8 +26,8 @@ class AssessmentService
             ->where('period_id', $periodId)
             ->first();
 
-        if ($submission && $submission->status === 'final') {
-            return 'final';
+        if ($submission && ($submission->status === 'final' || $submission->status === 'verified')) {
+            return $submission->status;
         }
 
         if ($submission && $submission->status === 'submitted') {
@@ -50,7 +50,7 @@ class AssessmentService
             ->where('period_id', $periodId)
             ->first();
 
-        if ($prevSubmission && $prevSubmission->status === 'final') {
+        if ($prevSubmission && ($prevSubmission->status === 'final' || $prevSubmission->status === 'verified')) {
             return $submission ? 'draft' : 'unlocked';
         }
 
@@ -71,5 +71,35 @@ class AssessmentService
             ->count();
 
         return round(($answeredQuestions / $totalQuestions) * 100);
+    }
+
+    /**
+     * Get global assessment stats for a school.
+     */
+    public function getSchoolStats($sekolahId, $periodId)
+    {
+        $levels = Level::where('period_id', $periodId)->get();
+        $totalLevels = $levels->count();
+        $completedLevels = LevelSubmission::where('sekolah_id', $sekolahId)
+            ->where('period_id', $periodId)
+            ->whereIn('status', ['final', 'verified'])
+            ->count();
+
+        $totalQuestions = \App\Models\Pertanyaan::whereIn('level_id', $levels->pluck('id'))->count();
+        $answeredQuestions = \App\Models\Jawaban::where('sekolah_id', $sekolahId)
+            ->where('period_id', $periodId)
+            ->count();
+
+        $overallProgress = $totalQuestions > 0 ? round(($answeredQuestions / $totalQuestions) * 100) : 0;
+
+        return [
+            'kategori_selesai' => "{$completedLevels} / {$totalLevels}",
+            'indikator_terisi' => "{$answeredQuestions} / {$totalQuestions}",
+            'progress' => $overallProgress,
+            'is_verified' => LevelSubmission::where('sekolah_id', $sekolahId)
+                ->where('period_id', $periodId)
+                ->where('status', 'verified')
+                ->count() === $totalLevels && $totalLevels > 0
+        ];
     }
 }
