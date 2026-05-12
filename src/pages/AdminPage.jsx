@@ -58,7 +58,6 @@ export default function AdminPage() {
     showToast(status === VERIFY.MEMENUHI ? "✓ Diverifikasi: Memenuhi" : "Diverifikasi: Belum Memenuhi");
   }
 
-  // ── School list ──────────────────────────────────────
   if (!selectedSchool) {
     return (
       <div style={{ minHeight: "100vh", background: "#f5f5f3" }}>
@@ -131,7 +130,6 @@ export default function AdminPage() {
     );
   }
 
-  // ── Detail verifikasi ──────────────────────────────────
   const sd = allData[selectedSchool.id] || {};
   const answers = sd.answers || {};
   const verifikasi = sd.verifikasi || {};
