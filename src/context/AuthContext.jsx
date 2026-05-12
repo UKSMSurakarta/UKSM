@@ -4,7 +4,7 @@ import { SCHOOLS, ADMIN_CREDENTIALS } from "../data/questions";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // { role: 'user'|'admin', school?: {...} }
+  const [user, setUser] = useState(null);
 
   function login(role, username, password) {
     if (role === "admin") {
