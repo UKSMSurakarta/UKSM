@@ -1,30 +1,38 @@
 import { createContext, useContext, useState } from "react";
-import { SCHOOLS, ADMIN_CREDENTIALS } from "../data/questions";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); 
 
   function login(role, username, password) {
-    if (role === "admin") {
-      if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        setUser({ role: "admin" });
-        return { ok: true };
-      }
-      return { ok: false, message: "Username atau password admin salah" };
+    // Manual Accounts
+    const accounts = {
+      sekolah: { user: "sekolah", pass: "sekolah123", name: "Kepala Sekolah", role: "sekolah" },
+      admin: { user: "admin", pass: "admin123", name: "Admin OPD", role: "admin" },
+      superadmin: { user: "superadmin", pass: "super123", name: "Superadmin Pusat", role: "superadmin" },
+      konten: { user: "konten", pass: "konten123", name: "Pengelola Publikasi", role: "konten" }
+    };
+
+    if (!accounts[role]) {
+      return { ok: false, message: "Pilih peran yang valid" };
     }
-    if (role === "user") {
-      const school = SCHOOLS.find(
-        (s) => s.username === username && s.password === password
-      );
-      if (school) {
-        setUser({ role: "user", school });
-        return { ok: true };
+
+    if (username === accounts[role].user && password === accounts[role].pass) {
+      const userData = { 
+        role: role, 
+        username: accounts[role].name 
+      };
+      
+      if (role === "sekolah") {
+        userData.school = { id: "1", name: "SDN 011 Laweyan" };
       }
-      return { ok: false, message: "Username atau password salah" };
+      
+      setUser(userData);
+      return { ok: true };
     }
-    return { ok: false, message: "Pilih peran terlebih dahulu" };
+
+    return { ok: false, message: "Username atau password salah" };
   }
 
   function logout() {

@@ -187,15 +187,45 @@ export function UKSProvider({ children }) {
     return answeredKeys.every(key => verifikasi[key]?.finalized === true);
   }
 
+  // Dipanggil admin saat tombol Verifikasi dikonfirmasi
+  // Otomatis set certificateReady=true sehingga sekolah bisa download sertifikat
+  function verifySchool(schoolId, predikat, catatan, adminName) {
+    setSchoolData((prev) => {
+      const sd = prev[schoolId] || {};
+      const nomorSertif = `UKS-${new Date().getFullYear()}-${String(schoolId).padStart(4, "0")}-${Date.now().toString().slice(-4)}`;
+      return {
+        ...prev,
+        [schoolId]: {
+          ...sd,
+          verified: true,
+          predikat,
+          catatanVerifikasi: catatan || "",
+          verifiedBy: adminName || "Admin",
+          verifiedAt: new Date().toLocaleString("id-ID"),
+          certificateReady: true,
+          nomorSertifikat: nomorSertif,
+        },
+      };
+    });
+  }
+
   function getAllSchoolData() {
     return schoolData;
+  }
+
+  function setCertificateName(schoolId, name) {
+    setSchoolData((prev) => {
+      const sd = prev[schoolId] || {};
+      return { ...prev, [schoolId]: { ...sd, certificateName: name } };
+    });
   }
 
   return (
     <UKSContext.Provider value={{
       getSchoolData, updateAnswer, submitTier,
       updateVerifikasi, submitVerifikasiQuestion,
-      allTiersVerifiedForSchool, getAllSchoolData,
+      allTiersVerifiedForSchool, verifySchool, getAllSchoolData,
+      setCertificateName,
     }}>
       {children}
     </UKSContext.Provider>
