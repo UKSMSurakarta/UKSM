@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import templateSrc from "../assets/sertifikat-template.png";
 
 
-const NAME_X_RATIO = 0.112
-const NAME_Y_RATIO = 0.475; 
-const FONT_SIZE_RATIO = 0.040; 
+const NAME_X_RATIO = 0.112;
+const NAME_Y_RATIO = 0.475;
+const FONT_SIZE_RATIO = 0.040;
 
 export default function Certificate({ schoolName, kepalaName }) {
   const canvasRef = useRef(null);
