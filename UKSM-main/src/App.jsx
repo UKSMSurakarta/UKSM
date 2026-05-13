@@ -21,10 +21,13 @@ import KontenListPage from './pages/user/KontenListPage';
 import KontenFormPage from './pages/user/KontenFormPage';
 import VerifikasiPage from './pages/admin/VerifikasiPage';
 import DetailVerifikasiPage from './pages/admin/DetailVerifikasiPage';
+import MonitoringPage from './pages/admin/MonitoringPage';
+import DataSekolahPage from './pages/admin/DataSekolahPage';
 import AssessmentPage from './pages/sekolah/AssessmentPage';
 import IsiLevelPage from './pages/sekolah/IsiLevelPage';
 import SekolahDashboard from './pages/sekolah/Dashboard';
 import ProfilePage from './pages/sekolah/ProfilePage';
+import PengumumanPage from './pages/shared/PengumumanPage';
 
 // Public Pages
 import PublicLayout from './components/layouts/PublicLayout';
@@ -59,6 +62,7 @@ function App() {
                         <Route path="/superadmin/levels/:levelId/questions" element={<PertanyaanPage />} />
                         <Route path="/superadmin/verifikasi" element={<VerifikasiPage />} />
                         <Route path="/superadmin/verifikasi/:sekolahId" element={<DetailVerifikasiPage />} />
+                        <Route path="/superadmin/pengumumans" element={<PengumumanPage />} />
                     </Route>
                 </Route>
 
@@ -66,8 +70,11 @@ function App() {
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route element={<DashboardLayout />}>
                         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/data-sekolah" element={<DataSekolahPage />} />
+                        <Route path="/admin/monitoring" element={<MonitoringPage />} />
                         <Route path="/admin/verifikasi" element={<VerifikasiPage />} />
                         <Route path="/admin/verifikasi/:sekolahId" element={<DetailVerifikasiPage />} />
+                        <Route path="/admin/pengumumans" element={<PengumumanPage />} />
                     </Route>
                 </Route>
 

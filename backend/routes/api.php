@@ -46,6 +46,10 @@ Route::prefix('v1')->group(function () {
             // Assessment Period Management
             Route::apiResource('periods', \App\Http\Controllers\API\Superadmin\AssessmentPeriodController::class);
             Route::patch('periods/{id}/toggle-active', [\App\Http\Controllers\API\Superadmin\AssessmentPeriodController::class, 'toggleActive']);
+
+            // Pengumuman Management (Superadmin - bisa pilih target all/opd)
+            Route::apiResource('pengumumans', \App\Http\Controllers\API\Shared\PengumumanController::class)->except(['show']);
+            Route::get('pengumumans-opd-list', [\App\Http\Controllers\API\Shared\PengumumanController::class, 'opdList']);
         });
 
 
@@ -80,11 +84,19 @@ Route::prefix('v1')->group(function () {
                 Route::get('/statistik-periode/{periodId}', [\App\Http\Controllers\API\Admin\ReportController::class, 'statistikPeriode']);
             });
 
+            // School Management for Admin
+            Route::apiResource('sekolahs', \App\Http\Controllers\API\Admin\SekolahController::class)->only(['index', 'show']);
+
             // Verification
             Route::prefix('verifikasi')->group(function () {
                 Route::get('/', [\App\Http\Controllers\API\Admin\VerificationController::class, 'index']);
                 Route::post('/{sekolahId}/level/{levelId}', [\App\Http\Controllers\API\Admin\VerificationController::class, 'verify']);
             });
+
+            Route::get('/monitoring', [\App\Http\Controllers\API\Admin\DashboardController::class, 'monitoring']);
+
+            // Pengumuman Management (Admin OPD - hanya untuk sekolah OPD sendiri)
+            Route::apiResource('pengumumans', \App\Http\Controllers\API\Shared\PengumumanController::class)->except(['show']);
         });
 
         // Notifications

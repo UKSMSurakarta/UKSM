@@ -59,7 +59,12 @@ const DetailVerifikasiPage = () => {
                 </button>
                 <div>
                     <h4 className="fw-bold m-0">{data.sekolah?.nama || 'Nama Sekolah'}</h4>
-                    <p className="text-muted small mb-0">{data.sekolah?.jenjang} - {data.sekolah?.opd?.nama}</p>
+                    <div className="d-flex flex-wrap gap-3 mt-1">
+                        <span className="text-muted small"><i className="bi bi-geo-alt me-1"></i>{data.sekolah?.alamat || '-'}</span>
+                        <span className="text-muted small"><i className="bi bi-person me-1"></i>{data.sekolah?.kepala_sekolah || '-'}</span>
+                        <span className="text-muted small"><i className="bi bi-telephone me-1"></i>{data.sekolah?.telepon || '-'}</span>
+                        <span className="badge bg-primary-subtle text-primary border border-primary-subtle">{data.sekolah?.jenjang}</span>
+                    </div>
                 </div>
             </div>
 

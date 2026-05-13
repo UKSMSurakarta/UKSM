@@ -13,6 +13,7 @@ const Sidebar = ({ isMobile, closeSidebar }) => {
             { path: '/superadmin/users', icon: 'people', label: 'Manajemen User' },
             { path: '/superadmin/levels', icon: 'journal-list', label: 'Bank Soal & Level' },
             { path: '/superadmin/periods', icon: 'calendar-range', label: 'Periode Assessment' },
+            { path: '/superadmin/pengumumans', icon: 'megaphone', label: 'Kelola Pengumuman' },
             { path: '/superadmin/reports', icon: 'file-earmark-bar-graph', label: 'Laporan & Rekap' },
             { path: '/superadmin/content', icon: 'newspaper', label: 'Konten Website' },
         ],
@@ -21,6 +22,7 @@ const Sidebar = ({ isMobile, closeSidebar }) => {
             { path: '/admin/data-sekolah', icon: 'mortarboard', label: 'Data Sekolah' },
             { path: '/admin/monitoring', icon: 'display', label: 'Monitoring Assessment' },
             { path: '/admin/verifikasi', icon: 'check-circle', label: 'Verifikasi Jawaban' },
+            { path: '/admin/pengumumans', icon: 'megaphone', label: 'Kelola Pengumuman' },
             { path: '/admin/reports', icon: 'file-earmark-bar-graph', label: 'Laporan Wilayah' },
         ],
         user: [

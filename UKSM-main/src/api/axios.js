@@ -30,8 +30,13 @@ axiosInstance.interceptors.response.use(
         const { response } = error;
 
         if (!response) {
-            // Network error (server mati atau tidak ada internet)
-            toast.error("Periksa koneksi internet Anda atau hubungi admin.");
+            // Deduplicate network error toasts
+            if (!window.isNetworkErrorToastActive) {
+                window.isNetworkErrorToastActive = true;
+                toast.error("Periksa koneksi internet Anda atau hubungi admin.", {
+                    onClose: () => { window.isNetworkErrorToastActive = false; }
+                });
+            }
             return Promise.reject(error);
         }
 

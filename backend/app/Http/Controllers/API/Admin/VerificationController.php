@@ -7,10 +7,10 @@ use App\Models\Sekolah;
 use App\Models\Level;
 use App\Models\LevelSubmission;
 use App\Models\Jawaban;
+use App\Models\User;
+use App\Notifications\LevelVerifiedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\LevelVerifiedNotification;
-use Illuminate\Support\Facades\Notification;
 
 class VerificationController extends Controller
 {
@@ -19,11 +19,14 @@ class VerificationController extends Controller
      */
     public function index()
     {
-        $sekolahs = Sekolah::whereHas('levelSubmissions', function($q) {
-            $q->where('status', 'final');
-        })->with(['opd', 'levelSubmissions' => function($q) {
-            $q->where('status', 'final')->with('level');
-        }])->get();
+        $opdId = auth()->user()->opd_id;
+        
+        $sekolahs = Sekolah::where('opd_id', $opdId)
+            ->whereHas('levelSubmissions', function($q) {
+                $q->where('status', 'final');
+            })->with(['opd', 'levelSubmissions' => function($q) {
+                $q->where('status', 'final')->with('level');
+            }])->get();
 
         return response()->json([
             'success' => true,
@@ -68,10 +71,10 @@ class VerificationController extends Controller
             }
 
             // Notify School
-            $sekolahUser = \App\Models\User::where('sekolah_id', $sekolahId)->first();
+            $sekolahUser = User::where('sekolah_id', $sekolahId)->first();
             if ($sekolahUser) {
                 $level = Level::find($levelId);
-                $sekolahUser->notify(new \App\Notifications\LevelVerifiedNotification([
+                $sekolahUser->notify(new LevelVerifiedNotification([
                     'level_name' => $level->nama,
                     'status' => $request->status,
                     'catatan' => $request->catatan,

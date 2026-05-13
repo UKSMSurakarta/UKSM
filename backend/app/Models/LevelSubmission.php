@@ -8,7 +8,8 @@ class LevelSubmission extends Model
 {
     protected $fillable = [
         'sekolah_id', 'level_id', 'period_id', 
-        'status', 'submitted_at', 'finalized_at', 'total_skor'
+        'status', 'submitted_at', 'finalized_at', 'total_skor',
+        'verified_at', 'verifier_id', 'catatan_verifikator'
     ];
 
     public function level()
